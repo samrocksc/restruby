@@ -1,0 +1,17 @@
+<h1>Listing articles</h1>
+
+<table>
+  <tr>
+    <th>zipcode</th>
+    <th>place</th>
+  </tr>
+
+  <% @zipcodes.each do |zipcodes| %>
+    <tr>
+      <td><%= zipcodes.zipcode %></td>
+      <td><%= zipcodes.place %></td>
+    </tr>
+  <% end %>
+</table>
+
+
