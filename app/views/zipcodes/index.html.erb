@@ -1,20 +1,59 @@
 <h1>Enter a Zipcode</h1>
+
 <%= form_for :zipcodes, url: zipcodes_path do |f| %>
   <p>
   <%= f.label :zipcode %><br/>
-  <%= f.text_field :zipcode %>
+  <input onchange='wayTooLate()' onfocusout='wayTooLate()' type="text" name="zipcodes[zipcode]" id="zipcodes_zipcode" pattern="-?[0-9]*(\.[0-9]+)?" />
   </p>
 
   <p>
-  <%= f.label :place %><br/>
-  <%= f.text_field :place %>
+  <input type="hidden" value='' name="zipcodes[place]" id="zipcodes_place" />
   </p>
+  <span id='queryStatus'>City Name</span>
 
   <p>
-  <%= f.submit %>
+  <input type='button' id='test' value='Check' onclick="wayTooLate()" />
   </p>
-  <% end %>
+<% end %>
 
-  <p>
-  <%= link_to 'Show Zipcodes', 'zipcodes/list' %>
-  </p>
+<p>
+<%= link_to 'Show Zipcodes', 'zipcodes/list' %>
+</p>
+
+
+
+
+<script>
+function wayTooLate(){
+  var client = new XMLHttpRequest();
+  var placeData = document.getElementById('zipcodes_place').value
+    var zipData = document.getElementById('zipcodes_zipcode').value;
+  client.open("GET", "http://api.zippopotam.us/us/"+zipData, true);
+  client.onreadystatechange = function() {
+    if(client.readyState == 4) {
+      if(client.status === 200) {
+        var tooLate = client.responseText;
+        var placeName = JSON.parse(tooLate).places[0]['place name'];
+        document.getElementById('zipcodes_place').value = placeName;
+        document.getElementById('test').value = 'Submit Zipcode?';
+        document.getElementById('test').name = 'commit';
+        document.getElementById('test').type = 'submit';
+        document.getElementById('queryStatus').innerHTML = 'The city for this zipcode is '+placeName;
+      } else {
+        document.getElementById('queryStatus').innerHTML = 'There is no zipcode for this.'
+      }
+    }
+  };
+  client.send()
+}
+</script>
+
+<script type="text/javascript">
+function stopRKey(evt) {
+  var evt = (evt) ? evt : ((event) ? event : null);
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;}
+}
+
+document.onkeypress = stopRKey;
+</script>

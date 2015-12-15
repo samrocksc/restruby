@@ -1,6 +1,7 @@
 class ZipcodesController < ApplicationController
+
   def new
-    @zipcodes = Zipcode.new
+    puts 'test'
   end
 
   def show
